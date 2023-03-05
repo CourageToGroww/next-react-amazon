@@ -23,7 +23,7 @@ function ProductFeed({ products }) {
         alt=""
       />
 
-      <div className="md:col-span-2">
+      <div className="md:col-span-1">
         {products
           .slice(4, 5)
           .map(({ id, title, price, description, category, image }) => (

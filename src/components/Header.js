@@ -4,14 +4,23 @@ import {
   SearchIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/outline";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { selectItems } from "../slices/basketSlice";
 
-function Header() {
+export default function Header() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const items = useSelector(selectItems);
+
   return (
     <header>
       {/*Top Nav */}
       <div className="flex items-center bg-amazon_blue flex-grow py-2">
         <div className="mt-2 flex items-center px-4 flex-grow sm:flex-grow-0">
           <Image
+            onClick={() => router.push("/")}
             src="https://links.papareact.com/f90"
             width={113}
             height={50}
@@ -30,23 +39,33 @@ function Header() {
         </div>
 
         {/* Right */}
-        <div className="text-white flex items-center text-xs space-x-6 mx-6 whitespace-nowrap">
-          <div className="link">
-            <p>Hello!</p>
-            <p className="font-bold md:text-sm">Account & Lists</p>
+        <div className="flex items-center text-xs text-white space-x-6 whitespace-nowrap">
+          <div
+            onClick={!session ? signIn : signOut}
+            className="cursor-pointer link"
+          >
+            <p className="ml-14">
+              {session ? ` Hello, ${session.user.name}` : "Sign In"}
+            </p>
+            <p className=" ml-14 font-bold md:text-sm">Account & Lists</p>
           </div>
+        </div>
 
+        <div className="flex items-center text-xs text-white space-x-6 mx-6 whitespace-nowrap">
           <div className="link">
             <p>Returns</p>
             <p className="font-bold md:text-sm">& Orders</p>
           </div>
 
-          <div className="relative link flex items-center">
+          <div
+            onClick={() => router.push("/checkout")}
+            className="relative flex items-center cursor-pointer link"
+          >
             <span className="absolute top-0 right-0 md:right-5 h-4 w-4 bg-yellow-400 text-center rounded-full text-black">
-              0
+              {items.length}
             </span>
             <ShoppingCartIcon className="h-10" />
-            <p className="hidden md:inline font-bold md:text-sm">Cart</p>
+            <p className="hidden md:inline font-bold md:text-sm mt-2">Cart</p>
           </div>
         </div>
       </div>
@@ -81,5 +100,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;
